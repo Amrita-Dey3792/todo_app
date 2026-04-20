@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/Presentation/providers/TodoProvider.dart';
 import 'package:todo_app/data/models/Todo.dart';
-import 'TodoDetailsPage.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -60,7 +60,20 @@ class HomeScreen extends StatelessWidget {
 
       // ================= BODY =================
       body: provider.todos.isEmpty
-          ? const Center(child: Text("No Todos Found"))
+          ? const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 60,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 10),
+                  Text("No Todos Found"),
+                ],
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(10),
               itemCount: provider.todos.length,
@@ -95,84 +108,72 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
 
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => TodoDetailsPage(todo: todo),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: todo.isCompleted,
+                            onChanged: (_) => provider.toggleTodo(todo.id),
                           ),
-                        );
-                      },
 
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                          const SizedBox(width: 8),
 
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: todo.isCompleted,
-                              onChanged: (_) => provider.toggleTodo(todo.id),
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    todo.title,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      decoration: todo.isCompleted
-                                          ? TextDecoration.lineThrough
-                                          : null,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 4),
-
-                                  Text(
-                                    todo.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CircleAvatar(
-                                  radius: 5,
-                                  backgroundColor: getPriorityColor(
-                                    todo.priority,
+                                Text(
+                                  todo.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    decoration: todo.isCompleted
+                                        ? TextDecoration.lineThrough
+                                        : null,
                                   ),
                                 ),
 
-                                const SizedBox(width: 10),
+                                const SizedBox(height: 4),
 
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed: () {
-                                    _showEditDialog(context, provider, todo);
-                                  },
+                                Text(
+                                  todo.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+
+                          const SizedBox(width: 8),
+
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: getPriorityColor(
+                                  todo.priority,
+                                ),
+                              ),
+
+                              const SizedBox(width: 10),
+
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  _showEditDialog(context, provider, todo);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
